@@ -32,7 +32,7 @@ const val ROUTE_HISTORY = "HISTORY"
 const val ROUTE_WORKERS = "WORKERS"
 const val ROUTE_WORKER_VIEW = "WORKER_VIEW"
 
-const val ROUTE_RAPORTS = "RAPORTS"
+const val ROUTE_REPORTS = "REPORTS"
 
 const val ROUTE_INVENTORY = "INVENTORY"
 const val ROUTE_ITEM_VIEW = "ITEM_VIEW"
@@ -62,7 +62,7 @@ sealed class Screen(
     data object History : Screen(route = ROUTE_HISTORY)
     data object Workers : Screen(route = ROUTE_WORKERS)
     data object WorkerView : Screen(route = ROUTE_WORKER_VIEW)
-    data object Raports : Screen(route = ROUTE_RAPORTS)
+    data object Reports : Screen(route = ROUTE_REPORTS)
     data object Inventory : Screen(route = ROUTE_INVENTORY)
     data object ItemView : Screen(route = ROUTE_ITEM_VIEW)
     data object OwnerMenu : Screen(route = ROUTE_OWNER_MENU)

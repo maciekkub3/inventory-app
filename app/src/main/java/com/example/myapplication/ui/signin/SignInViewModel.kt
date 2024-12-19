@@ -1,3 +1,4 @@
+/*
 package com.example.myapplication.ui.signin
 
 import androidx.lifecycle.ViewModel
@@ -100,4 +101,4 @@ sealed interface SignInScreenEvent {
 sealed interface SignInViewModelEvent {
     data object SignInAsOwnerSuccessful: SignInViewModelEvent
     data object SignInAsWorkerSuccessful: SignInViewModelEvent
-}
+}*/

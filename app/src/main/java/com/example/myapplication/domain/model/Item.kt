@@ -1,7 +1,6 @@
 package com.example.myapplication.domain.model
 
 import androidx.annotation.DrawableRes
-import java.time.LocalDateTime
 
 data class Item(
     val id: String,
@@ -13,3 +12,4 @@ data class Item(
     val price: Int,
     val quantity: Int
 )
+
