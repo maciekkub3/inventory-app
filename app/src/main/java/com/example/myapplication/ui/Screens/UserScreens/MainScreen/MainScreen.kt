@@ -1,4 +1,4 @@
-package com.example.myapplication.ui.mainscreen
+package com.example.myapplication.ui.Screens.UserScreens.MainScreen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -42,14 +42,18 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.myapplication.R
+import com.example.myapplication.ui.common.bottomBorder
+import com.example.myapplication.ui.theme.CharcoalBlue
+import com.example.myapplication.ui.theme.DarkTealBlue
+import com.example.myapplication.ui.theme.GrayishBlue
+import com.example.myapplication.ui.theme.backgroundGradientBrush
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WarehouseDashboardScreen() {
+fun MainScreen() {
     Scaffold(
         topBar = { DashboardTopBar() },
     ) { paddingValues ->
@@ -59,18 +63,8 @@ fun WarehouseDashboardScreen() {
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(
-                            Color(0xFF0F2027), // Darker shade at the top
-                            Color(0xFF203A43),
-                            Color(0xFF2C5364) // Lighter shade at the bottom
-                        )
-                    )
-
-                )
+                .background(backgroundGradientBrush)
         ) {
-            Divider(thickness = 0.5.dp, color = Color.Black)
 
             Spacer(modifier = Modifier.height(12.dp))
 
@@ -110,6 +104,9 @@ fun WarehouseDashboardScreen() {
 @Composable
 fun DashboardTopBar() {
     TopAppBar(
+        modifier = Modifier.bottomBorder(
+            strokeWidth = 1.dp, color = Color.Black
+        ),
         title = {},
         navigationIcon = {
             IconButton(onClick = { /* Handle menu */ }) {
@@ -139,7 +136,7 @@ fun DashboardTopBar() {
 fun InfoCard(title: String, percentage: Int) {
     Card(
         modifier = Modifier.size(150.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF3C4C5E)),
+        colors = CardDefaults.cardColors(containerColor = CharcoalBlue),
         shape = RoundedCornerShape(24.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
@@ -190,7 +187,7 @@ fun InfoCard(title: String, percentage: Int) {
 fun ScanCard() {
     Card(
         modifier = Modifier.size(150.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF3C4C5E)),
+        colors = CardDefaults.cardColors(containerColor = CharcoalBlue),
         shape = RoundedCornerShape(24.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
 
@@ -237,7 +234,7 @@ fun AddProductButton() {
             .fillMaxWidth()
             .padding(horizontal = 30.dp)
             .height(56.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3C4C5E)),
+        colors = ButtonDefaults.buttonColors(containerColor = CharcoalBlue),
         shape = RoundedCornerShape(20.dp),
         elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
     ) {
@@ -269,29 +266,61 @@ fun DashboardGridButtons() {
 
 @Composable
 fun GridButton(text: String, painter: Painter) {
-        Card(
-            modifier = Modifier
-                .size(60.dp)
-                .clickable { /* Handle button click */ },
-            colors = CardDefaults.cardColors(containerColor = Color(0xFF1D3A47)),
-            shape = RoundedCornerShape(8.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    Card(
+        modifier = Modifier
+            .size(60.dp)
+            .clickable { /* Handle button click */ },
+        colors = CardDefaults.cardColors(containerColor = DarkTealBlue),
+        shape = RoundedCornerShape(8.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
 
-        ) {
-            Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Icon(
-                        painter,
-                        contentDescription = text,
-                        tint = Color.White,
-                        modifier = Modifier.size(30.dp)
-                    )
-                    Text(text = text, color = Color.White, fontSize = 12.sp)
-                }
+    ) {
+        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Icon(
+                    painter,
+                    contentDescription = text,
+                    tint = Color.White,
+                    modifier = Modifier.size(30.dp)
+                )
+                Text(text = text, color = Color.White, fontSize = 12.sp)
             }
         }
+    }
+}
+
+
+//TODO Pojebane gowno
+@Composable
+fun UseButtons() {
+    Button(
+        onClick = { /*TODO*/ },
+        shape = RoundedCornerShape(8.dp),
+        modifier = Modifier
+            .size(60.dp)
+
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0xFF1D3A47))
+        ) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.icons8_users),
+                    contentDescription = null,
+                    modifier = Modifier.size(30.dp)
+                )
+                Text(text = "Workers", color = Color.White, fontSize = 12.sp)
+            }
+        }
+    }
 }
 
 
@@ -307,7 +336,7 @@ fun InventorySection() {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color(0xFF3C4C5E))
+                .background(CharcoalBlue)
         ) {
             Row(
                 modifier = Modifier
@@ -384,7 +413,7 @@ fun InventorySection() {
                             fontSize = 13.sp,
                             fontWeight = FontWeight.Bold,
 
-                        )
+                            )
                         Text(
                             text = "Last Restock",
                             color = Color.Gray,
@@ -459,7 +488,7 @@ fun InventoryItemRow(
                 shape = RoundedCornerShape(10.dp)
             ) // Apply shadow with rounded corners
             .background(
-                Color(0xFF58616D),
+                GrayishBlue,
                 RoundedCornerShape(10.dp)
             ) // Background with rounded corners
             .padding(8.dp),
@@ -479,7 +508,7 @@ fun InventoryItemRow(
                 "x",
                 modifier = Modifier
                     .padding(horizontal = 4.dp)
-                    .offset(y=(-1).dp),
+                    .offset(y = (-1).dp),
                 color = Color.White,
                 fontWeight = FontWeight.Light
             )
@@ -516,9 +545,3 @@ fun InventoryItemRow(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun PreviewWarehouseDashboard() {
-
-    WarehouseDashboardScreen()
-}

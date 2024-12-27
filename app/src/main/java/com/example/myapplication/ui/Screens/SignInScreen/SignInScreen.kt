@@ -1,4 +1,4 @@
-package com.example.myapplication.ui.signin
+package com.example.myapplication.ui.Screens.SignInScreen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -21,34 +21,33 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.myapplication.ui.signin.SignInScreenEvent
+import com.example.myapplication.ui.signin.SignInViewModel
+import com.example.myapplication.ui.theme.backgroundGradientBrush
 
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview
 @Composable
-fun LoginScreen() {
+fun LoginScreen(
+    viewModel: SignInViewModel = hiltViewModel(),
+
+) {
+    val state = viewModel.state.collectAsState().value
+    val events = viewModel.events.collectAsState(initial = null)
+
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xFF0F2027), // Darker shade at the top
-                        Color(0xFF203A43),
-                        Color(0xFF2C5364) // Lighter shade at the bottom
-                    )
-                )
-
-            )
+            .background(backgroundGradientBrush)
             .padding(horizontal = 24.dp),
         contentAlignment = Alignment.Center
     ) {
@@ -67,8 +66,8 @@ fun LoginScreen() {
             Spacer(modifier = Modifier.height(50.dp))
 
             OutlinedTextField(
-                value = "",
-                onValueChange = {},
+                value = state.userEmail,
+                onValueChange = {viewModel.onEvent(SignInScreenEvent.OnUserEmailChanged(it))},
                 label = { Text("Username") },
                 textStyle = TextStyle(color = Color.White),
                 colors = OutlinedTextFieldDefaults.colors(
@@ -85,8 +84,8 @@ fun LoginScreen() {
             Spacer(modifier = Modifier.height(8.dp))
 
             OutlinedTextField(
-                value = "",
-                onValueChange = {},
+                value = state.userPassword,
+                onValueChange = {viewModel.onEvent(SignInScreenEvent.OnUserPasswordChanged(it))},
                 label = { Text("Password") },
                 textStyle = TextStyle(color = Color.White),
                 colors = OutlinedTextFieldDefaults.colors(
@@ -101,7 +100,7 @@ fun LoginScreen() {
             )
 
             ElevatedButton(
-                onClick = { /* Handle login button click */ },
+                onClick = { viewModel.onEvent(SignInScreenEvent.OnSignInClicked) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 16.dp)

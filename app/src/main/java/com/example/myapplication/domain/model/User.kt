@@ -1,16 +1,24 @@
 package com.example.myapplication.domain.model
 
-data class User(
-    val name: String,
-    val email: String,
-    val address: String,
-    val phone: String,
-    val role: String,
-    val assigned_warehouse: List<String>,
-    val date_of_employement: String,
-    val last_login: String
+import com.google.firebase.firestore.PropertyName
 
+data class User(
+    @PropertyName("name") val name: String = "",
+    @PropertyName("email") val email: String = "",
+    @PropertyName("address") val address: String = "",
+    @PropertyName("phoneNumber") val phoneNumber: String = "",
+    @PropertyName("role") val role: String = "",
+    @PropertyName("assigned_warehouse") val assigned_warehouse: List<String> = emptyList(),
+    @PropertyName("date_of_employement") val date_of_employement: String = "",
+    @PropertyName("last_login") val last_login: String = "",
+    @PropertyName("id") val id: String = ""
 )
+
+
+
+
+
+
 /*
 "name" to name,
 "email" to email,

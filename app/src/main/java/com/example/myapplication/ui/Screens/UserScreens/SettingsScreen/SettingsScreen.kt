@@ -1,4 +1,4 @@
-package com.example.myapplication.ui.settings
+package com.example.myapplication.ui.Screens.UserScreens.SettingsScreen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -8,54 +8,67 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.myapplication.ui.common.BackTopAppBar
+import com.example.myapplication.ui.theme.DarkSlateGray
+import com.example.myapplication.ui.theme.GrayishBlue
 
 
 @Composable
 fun SettingsScreen() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFF47505B))
-    ) {
-        Column(
+    Scaffold(
+        topBar = {
+            BackTopAppBar(
+                onBackClick = { /* Handle back */ },
+                title = "Settings"
+            )
+        },
+    ) { innerPadding ->
+        Box(
             modifier = Modifier
-                .padding(vertical = 20.dp, horizontal = 20.dp)
+                .fillMaxSize()
+                .background(DarkSlateGray)
+                .padding(innerPadding)
         ) {
-            SettingsButton("Edit Profile Information")
-            SettingsButton("Change Password")
-            SettingsButton("Language Selection")
+            Column(
+                modifier = Modifier
+                    .padding(vertical = 20.dp, horizontal = 20.dp)
+            ) {
+                SettingsButton("Edit Profile Information", onClick = { /* Handle click */ })
+                SettingsButton("Change Password", onClick = { /* Handle click */ })
+                SettingsButton("Language Selection", onClick = { /* Handle click */ })
+            }
         }
     }
+
 
 }
 
 
 @Composable
-fun SettingsButton(text: String) {
+fun SettingsButton(text: String, onClick: () -> Unit) {
     ElevatedButton(
-        onClick = { /*TODO*/ },
-        colors = androidx.compose.material3.ButtonDefaults.buttonColors(containerColor = Color(0xFF58616D)),
-        shape = androidx.compose.foundation.shape.RoundedCornerShape(15.dp),
-
-
         modifier = Modifier
-
             .fillMaxWidth()
-            .padding(vertical = 5.dp)
-            .shadow(elevation = 4.dp, shape = RoundedCornerShape(15.dp))
-            ,
-            
-        ) {
+            .padding(vertical = 5.dp),
+        onClick = { onClick() },
+        colors = ButtonDefaults.buttonColors(containerColor = GrayishBlue),
+        shape = RoundedCornerShape(15.dp),
+        elevation = ButtonDefaults.elevatedButtonElevation(
+            defaultElevation = 1.dp,
+            pressedElevation = 0.dp
+        )
+    ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically

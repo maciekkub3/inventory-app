@@ -44,7 +44,7 @@ sealed class Screen(
     val route: String
 ) {
     data object SignIn : Screen(route = ROUTE_SIGN_IN)
-    data object MainPage : Screen(route = ROUTE_MAIN_PAGE)
+    data object OwnerMainPage : Screen(route = ROUTE_MAIN_PAGE)
     data object Settings : Screen(route = ROUTE_SETTINGS)
     data object EditProfile : Screen(route = ROUTE_EDIT_PROFILE)
     data object OwnerWarehouseMenu : Screen(route = ROUTE_OWNER_WAREHOUSE_MENU)

@@ -1,8 +1,10 @@
 package com.example.myapplication.domain.model
 
+import com.google.firebase.firestore.PropertyName
+
+
 data class Warehouse(
-    val assignedWorkers: List<User>,
-    val inventory: List<Item>,
-    val name: String,
-    val space: Int
+    @PropertyName("id") val id: String = "",
+    @PropertyName("name") val name: String = "",
+    @PropertyName("space") val space: String = ""
 )

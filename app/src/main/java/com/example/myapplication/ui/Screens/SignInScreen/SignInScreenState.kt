@@ -1,4 +1,4 @@
-package com.example.myapplication.ui.signin
+package com.example.myapplication.ui.Screens.SignInScreen
 
 data class SignInScreenState(
     val isLoading: Boolean = false,
@@ -6,5 +6,6 @@ data class SignInScreenState(
     val userPassword: String = "",
     val isSignedIn: Boolean = false,
     val emailError: String? = null,
-    val passwordError: String? = null
+    val passwordError: String? = null,
+    val userType: String? = null
 )
