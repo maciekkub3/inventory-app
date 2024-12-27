@@ -35,7 +35,7 @@ fun Navigation(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.OwnerMenu.route
+        startDestination = Screen.OwnerUsersView.route
     ) {
         composable(route = Screen.SignIn.route) {
             val viewModel = hiltViewModel<SignInViewModel>()
@@ -68,6 +68,12 @@ fun Navigation(
             OwnerMenuScreen(navController = navController)
         }
         composable(route = Screen.OwnerWarehouseMenu.route) {
+            val chooseWarehouseViewModel: ChooseWarehouseViewModel = hiltViewModel()
+            LaunchedEffect(chooseWarehouseViewModel.navigateToWarehouseDetails) {
+                chooseWarehouseViewModel.navigateToWarehouseDetails.collect { warehouseId ->
+                    navController.navigate("warehouseView/$warehouseId")
+                }
+            }
             ChooseWarehouseScreen(navController = navController)
         }
         composable(route = Screen.OwnerUsersMenu.route) {
@@ -80,9 +86,21 @@ fun Navigation(
             AddWarehouseScreen(navController = navController)
         }
         composable(route = Screen.OwnerUsersView.route) {
+            val usersScreenViewModel: UsersScreenViewModel = hiltViewModel()
+            LaunchedEffect(usersScreenViewModel.navigateToUserDetails) {
+                usersScreenViewModel.navigateToUserDetails.collect { userId ->
+                    navController.navigate("userView/$userId")
+                }
+            }
             UsersScreen(navController = navController)
         }
         composable(route = Screen.WarehouseMenu.route) {
+            val chooseWarehouseUserViewModel: ChooseWarehouseUserViewModel = hiltViewModel()
+            LaunchedEffect(chooseWarehouseUserViewModel.navigateToMainScreen) {
+                chooseWarehouseUserViewModel.navigateToMainScreen.collect { warehouseId ->
+                    navController.navigate("mainPage/$warehouseId")
+                }
+            }
             ChooseWarehouseUserScreen(navController = navController)
         }
 
@@ -109,24 +127,9 @@ fun Navigation(
             }
         }
     }
-    val chooseWarehouseViewModel: ChooseWarehouseViewModel = hiltViewModel()
-    LaunchedEffect(chooseWarehouseViewModel.navigateToWarehouseDetails) {
-        chooseWarehouseViewModel.navigateToWarehouseDetails.collect { warehouseId ->
-            navController.navigate("warehouseView/$warehouseId")
-        }
-    }
 
-    val chooseWarehouseUserViewModel: ChooseWarehouseUserViewModel = hiltViewModel()
-    LaunchedEffect(chooseWarehouseUserViewModel.navigateToMainScreen) {
-        chooseWarehouseUserViewModel.navigateToMainScreen.collect { warehouseId ->
-            navController.navigate("mainPage/$warehouseId")
-        }
-    }
 
-    val usersScreenViewModel: UsersScreenViewModel = hiltViewModel()
-    LaunchedEffect(usersScreenViewModel.navigateToUserDetails) {
-        usersScreenViewModel.navigateToUserDetails.collect { userId ->
-            navController.navigate("userView/$userId")
-        }
-    }
+
+
+
 }
