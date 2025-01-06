@@ -9,6 +9,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.myapplication.navigation.Screen
 import com.example.myapplication.ui.Screens.UserScreens.SettingsScreen.SettingsButton
@@ -18,13 +19,15 @@ import com.example.myapplication.ui.theme.DarkSlateGray
 
 @Composable
 fun OwnerMenuScreen(
-    navController: NavController, // Pass the NavController here
+    navController: NavController,
+    viewModel: OwnerMenuViewModel = hiltViewModel()
 
 ) {
+
     Scaffold(
         topBar = {
             LogoutTopAppBar(
-                onBackClick = { /* Handle back */ },
+                onLogoutClick = { viewModel.signOut(navController) },
                 title = "Main Menu"
             )
         },
@@ -41,6 +44,8 @@ fun OwnerMenuScreen(
             SettingsButton("Users", onClick = { navController.navigate(Screen.OwnerUsersView.route)})
         }
     }
+
+
 
 
 }

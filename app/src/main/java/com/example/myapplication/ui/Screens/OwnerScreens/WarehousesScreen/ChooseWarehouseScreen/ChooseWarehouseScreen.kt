@@ -27,51 +27,54 @@ import com.example.myapplication.domain.model.Warehouse
 import com.example.myapplication.navigation.Screen
 import com.example.myapplication.ui.common.BackTopAppBar
 import com.example.myapplication.ui.common.BottomBarWithTextAndButton
+import com.example.myapplication.ui.common.SearchLabel
 import com.example.myapplication.ui.theme.DarkSlateGray
 import com.example.myapplication.ui.theme.GrayishBlue
 
 
 @Composable
 fun ChooseWarehouseScreen(
-
-    navController: NavController, // Pass the NavController here
+    navController: NavController,
     viewModel: ChooseWarehouseViewModel = hiltViewModel(),
-    ) {
-    val warehouses by viewModel.warehouses.collectAsState()
+) {
+    val warehouses by viewModel.filteredWarehouses.collectAsState() // Observe filtered warehouses
     val warehouseCount = warehouses.size
-
+    val searchQuery by viewModel.searchQuery.collectAsState() // Observe search query
 
     Scaffold(
         topBar = {
             BackTopAppBar(
                 title = "Warehouses",
-                onBackClick = {navController.navigateUp()}
+                onBackClick = { navController.navigateUp() }
             )
         },
         bottomBar = {
-            BottomBarWithTextAndButton("Available warehouses: $warehouseCount", onButtonClick = {navController.navigate(Screen.OwnerAddWarehouse.route)})
+            BottomBarWithTextAndButton("Available warehouses: $warehouseCount", onButtonClick = { navController.navigate(Screen.OwnerAddWarehouse.route) })
         }
-    )
-    { innerPadding ->
-
-        LazyColumn(
-            contentPadding = innerPadding,
-            modifier = Modifier
-                .fillMaxSize()
-                .background(DarkSlateGray) // Background color
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier.padding(innerPadding)
         ) {
-            items(warehouses) { warehouse ->
-                WarehouseItem(warehouse, onWarehouseClick = {
-                    // Navigate to the WarehouseDetailsScreen when clicked
-                    viewModel.onWarehouseClick(warehouse.id)
-                })
+            SearchLabel(
+                searchQuery = searchQuery,
+                onSearchQueryChanged = { query ->
+                    viewModel.onSearchQueryChanged(query)
+                }
+            )
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(DarkSlateGray)
+            ) {
+                items(warehouses) { warehouse ->
+                    WarehouseItem(warehouse, onWarehouseClick = {
+                        viewModel.onWarehouseClick(warehouse.id)
+                    })
+                }
             }
         }
-
     }
 }
-
-
 @Composable
 fun WarehouseItem(warehouse: Warehouse, onWarehouseClick: () -> Unit) {
     Card(

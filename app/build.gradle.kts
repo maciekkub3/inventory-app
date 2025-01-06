@@ -74,6 +74,7 @@ dependencies {
     // Hilt (Dependency Injection)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.firebase.auth.ktx)
+    implementation(libs.firebase.storage.ktx)
     kapt(libs.androidx.hilt.compiler)
     implementation(libs.google.hilt)
     kapt(libs.google.hilt.compiler)
@@ -95,4 +96,7 @@ dependencies {
     // Debugging tools
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    implementation(libs.coil.compose)
+
 }

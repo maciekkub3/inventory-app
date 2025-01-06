@@ -2,9 +2,11 @@ package com.example.myapplication.ui.common
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -15,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
@@ -25,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -33,6 +37,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -95,7 +100,7 @@ fun InformationTextField(
                 textStyle = TextStyle(
                     color = Color.White,
                     fontSize = 16.sp,
-                    fontWeight = FontWeight.ExtraLight,
+                    fontWeight = FontWeight.Light,
                     textAlign = TextAlign.Center
                 ),
                 colors = TextFieldDefaults.textFieldColors(
@@ -296,12 +301,13 @@ fun AddProductLabel(
                         .size(30.dp)
                 )
 
-                TextField(
+                AmountTextField(
                     value = "85",
                     onValueChange = {},
-                    shape = RoundedCornerShape(5.dp),
+//                    shape = RoundedCornerShape(5.dp),
                     modifier = Modifier
-                        .width(50.dp)
+                        .width(50.dp),
+
 
 
                 )
@@ -318,6 +324,35 @@ fun AddProductLabel(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AmountTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    BasicTextField(
+        value = value,
+        onValueChange = onValueChange,
+        modifier = modifier,
+//        visualTransformation = visualTransformation,
+        interactionSource = interactionSource,
+        enabled = true,
+        singleLine = true,
+    ) { innerTextField ->
+        TextFieldDefaults.DecorationBox(
+            value = value,
+            visualTransformation = VisualTransformation.None,
+            innerTextField = innerTextField,
+            singleLine = true,
+            enabled = true,
+            interactionSource = interactionSource,
+            contentPadding = PaddingValues(0.dp), // this is how you can remove the padding
+        )
+    }
+}
+
 @Preview
 @Composable
 fun AddProductLabelPreview() {
@@ -325,9 +360,13 @@ fun AddProductLabelPreview() {
 }
 
 
-@Preview
+
 @Composable
-fun SearchLabel() {
+fun SearchLabel(
+    searchQuery: String,
+    onSearchQueryChanged: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
     Box(
         modifier = Modifier
             .height(80.dp)
@@ -338,11 +377,11 @@ fun SearchLabel() {
     ) {
         TextField(
             shape = RoundedCornerShape(10.dp),
-            value = "",
-            onValueChange = {},
+            value = searchQuery,
+            onValueChange = { onSearchQueryChanged(it) },
             label = {
                 Row(
-
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
                         imageVector = Icons.Default.Search,
@@ -352,24 +391,20 @@ fun SearchLabel() {
                     Spacer(modifier = Modifier.width(10.dp))
                     Text(
                         text = "Search...",
+                        color = Color.Black,
                         modifier = Modifier
                     )
                 }
-
             },
+            textStyle = TextStyle(color = Color.Black),
+
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(10.dp)
-,
-
         )
-
-        Spacer(modifier = Modifier.width(20.dp))
-
-
     }
-
 }
+
 
 
 

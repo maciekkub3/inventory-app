@@ -47,7 +47,7 @@ fun ChooseWarehouseUserScreen(
         topBar = {
             LogoutTopAppBar(
                 title = "Warehouses",
-                onBackClick = {navController.navigateUp()}
+                onLogoutClick = {viewModel.signOut(navController)}
             )
         },
         bottomBar = {

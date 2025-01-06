@@ -40,7 +40,7 @@ import com.example.myapplication.ui.theme.backgroundGradientBrush
 fun LoginScreen(
     viewModel: SignInViewModel = hiltViewModel(),
 
-) {
+    ) {
     val state = viewModel.state.collectAsState().value
     val events = viewModel.events.collectAsState(initial = null)
 
@@ -67,8 +67,13 @@ fun LoginScreen(
 
             OutlinedTextField(
                 value = state.userEmail,
-                onValueChange = {viewModel.onEvent(SignInScreenEvent.OnUserEmailChanged(it))},
-                label = { Text("Username") },
+                onValueChange = { viewModel.onEvent(SignInScreenEvent.OnUserEmailChanged(it)) },
+                label = {
+                    Text(
+                        text = "Username",
+                        color = Color.White,
+                    )
+                },
                 textStyle = TextStyle(color = Color.White),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = Color.White,
@@ -85,8 +90,13 @@ fun LoginScreen(
 
             OutlinedTextField(
                 value = state.userPassword,
-                onValueChange = {viewModel.onEvent(SignInScreenEvent.OnUserPasswordChanged(it))},
-                label = { Text("Password") },
+                onValueChange = { viewModel.onEvent(SignInScreenEvent.OnUserPasswordChanged(it)) },
+                label = {
+                    Text(
+                        text = "Password",
+                        color = Color.White
+                    )
+                },
                 textStyle = TextStyle(color = Color.White),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = Color.White,
@@ -139,7 +149,6 @@ fun LoginScreen(
                     modifier = Modifier.weight(1f)
                 )
             }
-
 
 
         }

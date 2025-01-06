@@ -118,9 +118,9 @@ class SignInViewModel @Inject constructor(
 
     private fun handleOnUserSignedIn(userType: String?) {
         //navigate here with proper userType
-        if(userType == "Admin") {
+        if(userType == "Owner") {
             eventChannel.trySend(SignInViewModelEvent.SignInAsOwnerSuccessful)
-        } else if(userType == "Worker") {
+        } else if(userType == "Worker" || userType == "Admin") {
             eventChannel.trySend(SignInViewModelEvent.SignInAsWorkerSuccessful)
         }
     }

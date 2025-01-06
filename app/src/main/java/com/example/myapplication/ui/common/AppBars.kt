@@ -14,19 +14,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,92 +37,82 @@ import androidx.compose.ui.unit.sp
 import com.example.myapplication.R
 import com.example.myapplication.ui.theme.CharcoalBlue
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LogoutTopAppBar(onBackClick: () -> Unit, title: String) {
-    TopAppBar(
-        title = {
-            Box(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                // Title aligned in the center
-                Text(
-                    text = title,
-                    color = Color.White,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .align(Alignment.Center) // Center the title
-                )
+fun LogoutTopAppBar(onLogoutClick: () -> Unit, title: String) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color(0xFF3C4C5E)) // Custom background color
+            .height(56.dp) // Define the height of the AppBar manually
 
-                // Navigation icon positioned to the left
-                IconButton(
-                    onClick = onBackClick,
-                    modifier = Modifier
-                        .align(Alignment.CenterStart) // Align the icon to the start (left)
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.ExitToApp, // Logout icon
-                        contentDescription = "Logout",
-                        modifier = Modifier.size(40.dp)
-                    )
-                }
-            }
-        },
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = Color(0xFF3C4C5E), // Custom background color
-            titleContentColor = Color.White,   // Text color
-            navigationIconContentColor = Color.White // Icon color
+
+    ) {
+        // Navigation icon positioned to the left
+        IconButton(
+            onClick = onLogoutClick,
+            modifier = Modifier
+                .align(Alignment.CenterStart) // Align the icon to the start (left)
+                .padding(start = 16.dp) // Optional: Add padding to the icon
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.icons8_logout),
+                tint = Color.White,
+                contentDescription = "Logout",
+                modifier = Modifier.size(40.dp) // Adjust icon size
+            )
+        }
+
+        // Title aligned in the center
+        Text(
+            text = title,
+            color = Color.White,
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier
+                .align(Alignment.Center) // Center the title
         )
-    )
+    }
 }
 
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BackTopAppBar(onBackClick: () -> Unit, title: String) {
-    TopAppBar(
-        modifier = Modifier.bottomBorder(
-            strokeWidth = 1.dp,
-            color = Color.DarkGray
-        ),
-        title = {
-            Box(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                // Text aligned in the center
-                Text(
-                    text = title,
-                    color = Color.White,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .align(Alignment.Center) // Center the title
-                )
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color(0xFF3C4C5E)) // Custom background color
+            .height(56.dp) // Define the height of the AppBar manually
 
-                // Navigation icon positioned to the left
-                IconButton(
-                    onClick = onBackClick,
-                    modifier = Modifier
-                        .align(Alignment.CenterStart) // Align the icon to the start (left)
-                         // Optional: Add padding to the icon
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.icons8_arrowback), // Back arrow icon
-                        contentDescription = "Back",
-                        modifier = Modifier.size(40.dp)
-                    )
-                }
-            }
-        },
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = Color(0xFF3C4C5E), // Custom background color
-            titleContentColor = Color.White,   // Text color
-            navigationIconContentColor = Color.White // Icon color
+
+    ) {
+        // Navigation icon positioned to the left
+        IconButton(
+            onClick = onBackClick,
+            modifier = Modifier
+                .align(Alignment.CenterStart) // Align the icon to the start (left)
+                .padding(start = 16.dp) // Optional: Add padding to the icon
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.icons8_arrowback),
+                tint = Color.White,
+                contentDescription = "Back",
+                modifier = Modifier.size(40.dp) // Adjust icon size
+            )
+        }
+
+        // Title aligned in the center
+        Text(
+            text = title,
+            color = Color.White,
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier
+                .align(Alignment.Center) // Center the title
         )
-    )
+    }
 }
+
 
 @Composable
 fun BottomBarWithTextAndButton(
@@ -164,7 +149,7 @@ fun BottomBarWithTextAndButton(
                 .padding(end = 5.dp)
 
         ) {
-            Text(text = "ADD NEW")
+            Text(text = "ADD NEW", color = Color.White, fontWeight = FontWeight.Bold)
         }
     }
 }
@@ -210,7 +195,7 @@ fun BackTopAppBarPreview() {
 @Preview
 @Composable
 fun LogoutTopAppBarPreview() {
-    LogoutTopAppBar(onBackClick = { /* Handle back */ }, title = "Main menu")
+    LogoutTopAppBar(onLogoutClick = { /* Handle back */ }, title = "Main menu")
 }
 
 @Preview
@@ -321,7 +306,7 @@ fun TwoButtonsBottomBar(
                     shape = RoundedCornerShape(10.dp),
                     elevation = ButtonDefaults.buttonElevation(4.dp)
                 ) {
-                    Text(text = firstText, color = Color.White)
+                    Text(text = firstText, color = Color.White, fontWeight = FontWeight.Bold)
 
                 }
 
@@ -333,7 +318,7 @@ fun TwoButtonsBottomBar(
                     elevation = ButtonDefaults.buttonElevation(4.dp)
 
                 ) {
-                    Text(text = secondText, color = Color.White)
+                    Text(text = secondText, color = Color.White, fontWeight = FontWeight.Bold)
 
                 }
             }
@@ -408,7 +393,7 @@ fun PreviewCustomBottomBarr() {
 fun PreviewCustomTopAppBar() {
     Surface(modifier = Modifier.fillMaxSize(), color = Color.Black) {
         Column {
-            LogoutTopAppBar(onBackClick = { /* Handle back */ }, title = "Main menu")
+            LogoutTopAppBar(onLogoutClick = { /* Handle back */ }, title = "Main menu")
         }
     }
 }

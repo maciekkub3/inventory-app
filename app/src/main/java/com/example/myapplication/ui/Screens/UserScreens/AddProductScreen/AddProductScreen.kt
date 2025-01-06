@@ -14,7 +14,6 @@ import com.example.myapplication.R
 import com.example.myapplication.ui.common.AddProductBottomBar
 import com.example.myapplication.ui.common.AddProductLabel
 import com.example.myapplication.ui.common.BackTopAppBar
-import com.example.myapplication.ui.common.SearchLabel
 import com.example.myapplication.ui.theme.DarkSlateGray
 
 @Preview
@@ -49,7 +48,7 @@ fun ChangePasswordScreen(
                 .fillMaxSize()
                 .background(DarkSlateGray)
         ) {
-            SearchLabel()
+            //SearchLabel()
             AddProductLabel(
                 name = "Coca Cola",
                 image = painterResource(id = R.drawable.colka)

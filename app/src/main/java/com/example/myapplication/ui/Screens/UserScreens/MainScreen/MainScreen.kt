@@ -42,6 +42,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.myapplication.R
@@ -52,13 +53,12 @@ import com.example.myapplication.ui.theme.GrayishBlue
 import com.example.myapplication.ui.theme.backgroundGradientBrush
 
 @OptIn(ExperimentalMaterial3Api::class)
+@Preview
 @Composable
 fun MainScreen() {
     Scaffold(
         topBar = { DashboardTopBar() },
     ) { paddingValues ->
-
-
         Column(
             modifier = Modifier
                 .padding(paddingValues)
@@ -95,7 +95,6 @@ fun MainScreen() {
             // Inventory Section
             InventorySection()
 
-            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }

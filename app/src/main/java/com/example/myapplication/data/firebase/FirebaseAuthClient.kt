@@ -28,34 +28,42 @@ class FirebaseAuthClient @Inject constructor(){
 
 
 
-   fun createAccount(email: String, password: String, role: String, name: String, phoneNumber: String, address: String) {
-        auth.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val userId = auth.currentUser?.uid ?: ""
-                    val userMap = hashMapOf(
-                        "email" to email,
-                        "role" to role,
-                        "name" to name,
-                        "phoneNumber" to phoneNumber,
-                        "address" to address
-                    )
+    suspend fun createAccount(email: String, password: String, role: String, name: String, phoneNumber: String, address: String, imageUrl: String) {
+        // Run the Firebase logic inside a suspend coroutine to avoid blocking the main thread
+        suspendCoroutine<Unit> { cont ->
+            auth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        val userId = auth.currentUser?.uid ?: ""
+                        val userMap = hashMapOf(
+                            "email" to email,
+                            "role" to role,
+                            "name" to name,
+                            "phoneNumber" to phoneNumber,
+                            "address" to address,
+                            "imageUrl" to imageUrl
+                        )
 
-                    FirebaseFirestore.getInstance()
-                        .collection("users")
-                        .document(userId)
-                        .set(userMap)
-                        .addOnSuccessListener {
-                            _event.tryEmit(AuthEvent.SignedUp(userId, email))
-                        }
-                        .addOnFailureListener { exception ->
-                            _event.tryEmit(AuthEvent.SignUpUnsuccessful(exception))
-                        }
-
-                } else {
-                    _event.tryEmit(AuthEvent.SignUpUnsuccessful(task.exception ?: Exception()))
+                        FirebaseFirestore.getInstance()
+                            .collection("users")
+                            .document(userId)
+                            .set(userMap)
+                            .addOnSuccessListener {
+                                cont.resume(Unit)  // Account created successfully
+                            }
+                            .addOnFailureListener { exception ->
+                                cont.resumeWithException(exception)  // Handle failure
+                            }
+                    } else {
+                        cont.resumeWithException(task.exception ?: Exception("Unknown error"))
+                    }
                 }
-            }
+        }
+    }
+
+
+    fun getCurrentUserId(): String? {
+        return FirebaseAuth.getInstance().currentUser?.uid
     }
 
     fun getUserType(userId: String): Flow<Result<String>> = flow {
@@ -78,16 +86,7 @@ class FirebaseAuthClient @Inject constructor(){
 
 
 
-    /*fun signInWithEmail(email: String, password: String): Flow<Result<Unit>> = flow {
-        auth.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    _event.tryEmit(AuthEvent.SignedIn(auth.currentUser?.uid ?: "", email))
-                } else {
-                    _event.tryEmit(AuthEvent.SignInUnsuccessful(task.exception ?: Exception()))
-                }
-            }
-    }*/
+
 
     fun signInWithEmail(email: String, password: String): Flow<Result<Unit>> = flow {
         try {
@@ -139,6 +138,7 @@ class FirebaseAuthClient @Inject constructor(){
             }
     }
 
+
     fun getUserById(userId: String, onResult: (User?) -> Unit) {
         val document = FirebaseFirestore.getInstance()
             .collection("users")
@@ -156,4 +156,45 @@ class FirebaseAuthClient @Inject constructor(){
                 onResult(null) // Handle any errors
             }
     }
+
+    fun updateUser(userId: String, updatedUser: User, onSuccess: () -> Unit, onError: (Exception) -> Unit) {
+        // Convert the User object to a Map, excluding the 'id' field
+        val userMap = mapOf(
+            "name" to updatedUser.name,
+            "role" to updatedUser.role,
+            "email" to updatedUser.email,
+            "phoneNumber" to updatedUser.phoneNumber,
+            "address" to updatedUser.address,
+            "imageUrl" to updatedUser.imageUrl
+        )
+
+        FirebaseFirestore.getInstance()
+            .collection("users")
+            .document(userId) // Use 'userId' as the document ID
+            .set(userMap) // Save the map instead of the User object directly
+            .addOnSuccessListener { onSuccess() }
+            .addOnFailureListener { exception -> onError(exception) }
+    }
+
+    fun updateWarehouse(warehouseId: String, updatedWarehouse: Warehouse, onSuccess: () -> Unit, onError: (Exception) -> Unit) {
+        // Convert the Warehouse object to a Map, excluding the 'id' field
+        val warehouseMap = mapOf(
+            "name" to updatedWarehouse.name,
+            "space" to updatedWarehouse.space,
+            "owner" to updatedWarehouse.owner,
+            "assignedWorkers" to updatedWarehouse.assignedWorkers
+        )
+
+        FirebaseFirestore.getInstance()
+            .collection("warehouses")
+            .document(warehouseId) // Use 'warehouseId' as the document ID
+            .set(warehouseMap) // Save the map instead of the Warehouse object directly
+            .addOnSuccessListener { onSuccess() }
+            .addOnFailureListener { exception -> onError(exception) }
+    }
+
+
+
+
+
 }

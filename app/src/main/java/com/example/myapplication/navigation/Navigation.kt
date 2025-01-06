@@ -35,7 +35,7 @@ fun Navigation(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.OwnerUsersView.route
+        startDestination = Screen.OwnerMenu.route
     ) {
         composable(route = Screen.SignIn.route) {
             val viewModel = hiltViewModel<SignInViewModel>()
@@ -76,9 +76,7 @@ fun Navigation(
             }
             ChooseWarehouseScreen(navController = navController)
         }
-        composable(route = Screen.OwnerUsersMenu.route) {
-            UsersScreen(navController = navController)
-        }
+
         composable(route = Screen.OwnerAddUsers.route) {
             AddUserScreen(navController = navController)
         }

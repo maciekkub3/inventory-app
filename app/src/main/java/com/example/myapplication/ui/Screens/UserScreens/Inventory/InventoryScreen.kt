@@ -21,7 +21,6 @@ import androidx.compose.ui.unit.sp
 import com.example.myapplication.R
 import com.example.myapplication.ui.Screens.UserScreens.MainScreen.InventoryItemRow
 import com.example.myapplication.ui.common.BackTopAppBar
-import com.example.myapplication.ui.common.SearchLabel
 import com.example.myapplication.ui.theme.DarkSlateGray
 
 
@@ -47,7 +46,7 @@ fun InventoryScreen(
                 .fillMaxSize()
                 .background(DarkSlateGray)
         ) {
-            SearchLabel()
+            //SearchLabel()
             Row(
                 horizontalArrangement = Arrangement.SpaceAround,
                 modifier = Modifier

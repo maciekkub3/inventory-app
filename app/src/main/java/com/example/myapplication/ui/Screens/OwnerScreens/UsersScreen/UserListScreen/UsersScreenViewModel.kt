@@ -22,20 +22,25 @@ class UsersScreenViewModel @Inject constructor(
     private val _users = MutableStateFlow<List<User>>(emptyList())
     val users: StateFlow<List<User>> = _users
 
-    private val _navigateToUserDetails = MutableSharedFlow<String>() // To emit the warehouseId
+    private val _filteredUsers = MutableStateFlow<List<User>>(emptyList()) // Store filtered users
+    val filteredUsers: StateFlow<List<User>> = _filteredUsers
+
+    private val _navigateToUserDetails = MutableSharedFlow<String>()
     val navigateToUserDetails = _navigateToUserDetails.asSharedFlow()
 
     private val firestore = FirebaseFirestore.getInstance()
+
+    // Store the search query
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery: StateFlow<String> = _searchQuery
 
     init {
         fetchUsers()
     }
 
-
-
     fun onUserClick(userId: String) {
         viewModelScope.launch {
-            _navigateToUserDetails.emit(userId) // Emit the event
+            _navigateToUserDetails.emit(userId)
         }
     }
 
@@ -43,25 +48,41 @@ class UsersScreenViewModel @Inject constructor(
         firestore.collection("users")
             .get()
             .addOnSuccessListener { result ->
-                val usersList = result.map { document ->
-                    User(
-                        id = document.id,
-                        name = document.getString("name") ?: "",
-                        email = document.getString("email") ?: "",
-                        address = document.getString("adress") ?: "",
-                        phoneNumber = document.getString("phone") ?: "",
-                        role = document.getString("role") ?: "",
-                        assigned_warehouse = document.get("assigned_warehouse") as? List<String> ?: emptyList(),
-                        date_of_employement = document.getString("date_of_employement") ?: "",
-                        last_login = document.getString("last_login") ?: ""
-                    )
+                val usersList = result.mapNotNull { document ->
+                    val role = document.getString("role") ?: ""
+                    if (role != "Owner") {
+                        User(
+                            id = document.id,
+                            name = document.getString("name") ?: "",
+                            email = document.getString("email") ?: "",
+                            address = document.getString("adress") ?: "",
+                            phoneNumber = document.getString("phone") ?: "",
+                            imageUrl = document.getString("imageUrl") ?: "",
+                            role = role
+                        )
+                    } else {
+                        null // Exclude "Owner" role users
+                    }
                 }
                 _users.value = usersList
+                filterUsers() // Apply filtering after fetching
             }
             .addOnFailureListener {
-                // Handle failure (e.g., log error)
+                // Handle failure
             }
     }
-}
 
+
+    fun onSearchQueryChanged(query: String) {
+        _searchQuery.value = query
+        filterUsers() // Re-filter when query changes
+    }
+
+    private fun filterUsers() {
+        val query = _searchQuery.value.lowercase()
+        _filteredUsers.value = _users.value.filter { user ->
+            user.name.lowercase().contains(query)
+        }
+    }
+}
 
