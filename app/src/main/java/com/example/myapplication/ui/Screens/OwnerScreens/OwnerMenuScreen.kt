@@ -34,9 +34,9 @@ fun OwnerMenuScreen(
     ) { innerPadding ->
         Column(
             modifier = Modifier
-                .padding(innerPadding)
                 .fillMaxSize()
                 .background(DarkSlateGray)
+                .padding(innerPadding)
                 .padding(vertical = 20.dp, horizontal = 20.dp)
 
         ) {

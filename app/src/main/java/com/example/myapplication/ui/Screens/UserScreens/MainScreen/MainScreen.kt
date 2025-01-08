@@ -42,10 +42,11 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.myapplication.R
+import com.example.myapplication.navigation.Screen
 import com.example.myapplication.ui.common.bottomBorder
 import com.example.myapplication.ui.theme.CharcoalBlue
 import com.example.myapplication.ui.theme.DarkTealBlue
@@ -53,17 +54,25 @@ import com.example.myapplication.ui.theme.GrayishBlue
 import com.example.myapplication.ui.theme.backgroundGradientBrush
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview
 @Composable
-fun MainScreen() {
+fun MainScreen(
+    navController: NavController,
+
+    ) {
     Scaffold(
-        topBar = { DashboardTopBar() },
+        topBar = {
+            DashboardTopBar(
+                onSettingsClick = {
+                    navController.navigate(Screen.Settings.route)
+                })
+        },
     ) { paddingValues ->
         Column(
             modifier = Modifier
-                .padding(paddingValues)
                 .fillMaxSize()
                 .background(backgroundGradientBrush)
+                .padding(paddingValues)
+
         ) {
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -83,17 +92,36 @@ fun MainScreen() {
             Spacer(modifier = Modifier.height(16.dp))
 
             // Add Product Button
-            AddProductButton()
+            AddProductButton(onButtonClick = { navController.navigate(Screen.AddProduct.route) })
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Grid Buttons: History, Workers, Reports
-            DashboardGridButtons()
+            Row(
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                GridButton(
+                    "History",
+                    painterResource(R.drawable.icons8_history),
+                    onButtonClick = { navController.navigate(Screen.History.route) })
+
+                if (true) { //TODO if user is owner
+
+                    GridButton(
+                        "Workers",
+                        painterResource(R.drawable.icons8_users),
+                        onButtonClick = { }) //TODO
+                }
+                GridButton(
+                    "Reports",
+                    painterResource(R.drawable.icons8_file),
+                    onButtonClick = { navController.navigate(Screen.Reports.route) }) //TODO
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
 
             // Inventory Section
-            InventorySection()
+            InventorySection(onButtonClick = { navController.navigate(Screen.Inventory.route) })
 
         }
     }
@@ -101,7 +129,9 @@ fun MainScreen() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DashboardTopBar() {
+fun DashboardTopBar(
+    onSettingsClick: () -> Unit
+) {
     TopAppBar(
         modifier = Modifier.bottomBorder(
             strokeWidth = 1.dp, color = Color.Black
@@ -118,7 +148,7 @@ fun DashboardTopBar() {
             }
         },
         actions = {
-            IconButton(onClick = { /* Handle settings */ }) {
+            IconButton(onClick = { onSettingsClick() }) {
                 Icon(
                     Icons.Default.Settings,
                     contentDescription = "Settings",
@@ -226,9 +256,9 @@ fun ScanCard() {
 }
 
 @Composable
-fun AddProductButton() {
+fun AddProductButton(onButtonClick: () -> Unit) {
     Button(
-        onClick = { /* Handle Add Product */ },
+        onClick = { onButtonClick() },
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 30.dp)
@@ -247,28 +277,13 @@ fun AddProductButton() {
     }
 }
 
-@Composable
-fun DashboardGridButtons() {
-    Row(
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        GridButton("History", painterResource(R.drawable.icons8_history))
-
-        if (true) { //TODO if user is owner
-
-            GridButton("Workers", painterResource(R.drawable.icons8_users))
-        }
-        GridButton("Raports", painterResource(R.drawable.icons8_file))
-    }
-}
 
 @Composable
-fun GridButton(text: String, painter: Painter) {
+fun GridButton(text: String, painter: Painter, onButtonClick: () -> Unit) {
     Card(
         modifier = Modifier
             .size(60.dp)
-            .clickable { /* Handle button click */ },
+            .clickable { onButtonClick() },
         colors = CardDefaults.cardColors(containerColor = DarkTealBlue),
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
@@ -324,7 +339,7 @@ fun UseButtons() {
 
 
 @Composable
-fun InventorySection() {
+fun InventorySection(onButtonClick: () -> Unit) {
     Card(
         colors = CardDefaults.cardColors(containerColor = Color(0xFF374251)),
         shape = RoundedCornerShape(16.dp),
@@ -340,7 +355,8 @@ fun InventorySection() {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(8.dp),
+                    .padding(8.dp)
+                    .clickable { onButtonClick() },
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {

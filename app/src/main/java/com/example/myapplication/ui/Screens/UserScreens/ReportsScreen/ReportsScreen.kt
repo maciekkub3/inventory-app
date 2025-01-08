@@ -1,6 +1,8 @@
-package com.example.myapplication.ui.Screens.UserScreens.SettingsScreen
+package com.example.myapplication.ui.Screens.UserScreens.ReportsScreen
+
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,46 +17,43 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.myapplication.navigation.Screen
 import com.example.myapplication.ui.common.BackTopAppBar
 import com.example.myapplication.ui.theme.DarkSlateGray
 import com.example.myapplication.ui.theme.GrayishBlue
 
 
 @Composable
-fun SettingsScreen(
+fun ReportsScreen(
     navController: NavController
 ) {
     Scaffold(
         topBar = {
             BackTopAppBar(
                 onBackClick = { navController.popBackStack() },
-                title = "Settings"
+                title = "Reports"
             )
         },
     ) { innerPadding ->
-
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(DarkSlateGray)
+                .padding(innerPadding)
+        ) {
             Column(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .background(DarkSlateGray)
-                    .padding(innerPadding)
                     .padding(vertical = 20.dp, horizontal = 20.dp)
             ) {
-                SettingsButton(
-                    "Edit Profile Information",
-                    onClick = { navController.navigate(Screen.EditProfile.route) })
-                SettingsButton(
-                    "Change Password",
-                    onClick = { navController.navigate(Screen.ChangePassword.route) })
-                SettingsButton("Language Selection", onClick = { /* Handle click */ })
-            }
+                ReportsButton("Current stock levels", onClick = { })
+                ReportsButton("Low stock report", onClick = { })
+                ReportsButton("Inventory activity history", onClick = {})
+                ReportsButton("Recent logins", onClick = { })
 
+            }
+        }
     }
 
 
@@ -62,7 +61,7 @@ fun SettingsScreen(
 
 
 @Composable
-fun SettingsButton(text: String, onClick: () -> Unit) {
+fun ReportsButton(text: String, onClick: () -> Unit) {
     ElevatedButton(
         modifier = Modifier
             .fillMaxWidth()
@@ -91,8 +90,3 @@ fun SettingsButton(text: String, onClick: () -> Unit) {
     }
 }
 
-@Preview
-@Composable
-fun SettingsScreenPreview() {
-    SettingsScreen(navController = NavController(LocalContext.current))
-}

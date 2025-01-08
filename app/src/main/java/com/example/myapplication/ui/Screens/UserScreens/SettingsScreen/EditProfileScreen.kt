@@ -19,8 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.myapplication.R
 import com.example.myapplication.ui.common.BackTopAppBar
 import com.example.myapplication.ui.common.InformationLabel
@@ -28,14 +28,15 @@ import com.example.myapplication.ui.common.TwoButtonsBottomBar
 import com.example.myapplication.ui.theme.DarkGrayish
 import com.example.myapplication.ui.theme.DarkSlateGray
 
-@Preview
 @Composable
-fun EditProfileScreen() {
+fun EditProfileScreen(
+    navController: NavController,
+) {
     Scaffold(
         topBar = {
             BackTopAppBar(
                 title = "Edit Proflile Information",
-                onBackClick = { /* Handle back */ }
+                onBackClick = { navController.popBackStack() }
             )
         },
         bottomBar = {

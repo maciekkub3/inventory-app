@@ -31,22 +31,23 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.myapplication.R
 import com.example.myapplication.ui.common.BackTopAppBar
 import com.example.myapplication.ui.common.TwoButtonsBottomBar
 import com.example.myapplication.ui.theme.DarkGrayish
 import com.example.myapplication.ui.theme.DarkSlateGray
 
-@Preview
 @Composable
 fun ItemViewScreen(
+    navController: NavController,
 
-) {
+    ) {
     Scaffold(
         topBar = {
             BackTopAppBar(
                 title = "Item View",
-                onBackClick = {}
+                onBackClick = {navController.popBackStack()}
             )
         },
         bottomBar = {

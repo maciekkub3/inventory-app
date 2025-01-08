@@ -20,20 +20,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.myapplication.ui.common.BackTopAppBar
 import com.example.myapplication.ui.common.TwoButtonsBottomBar
 import com.example.myapplication.ui.theme.DarkSlateGray
 
-@Preview
 @Composable
 fun ChangePasswordScreen(
-
-) {
+    navController: NavController,
+    ) {
     Scaffold(
         topBar = {
             BackTopAppBar(
                 title = "Change Password",
-                onBackClick = {}
+                onBackClick = {navController.popBackStack()}
             )
         },
         bottomBar = {

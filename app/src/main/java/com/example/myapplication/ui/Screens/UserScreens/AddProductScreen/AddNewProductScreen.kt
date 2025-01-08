@@ -20,8 +20,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.myapplication.R
 import com.example.myapplication.ui.common.BackTopAppBar
 import com.example.myapplication.ui.common.InformationLabel
@@ -30,14 +30,16 @@ import com.example.myapplication.ui.theme.Dark
 import com.example.myapplication.ui.theme.DarkGrayish
 import com.example.myapplication.ui.theme.DarkSlateGray
 
-@Preview
+
 @Composable
-fun EditProfileScreen() {
+fun AddNewProductScreen(
+    navController: NavController,
+) {
     Scaffold(
         topBar = {
             BackTopAppBar(
                 title = "Add New Product",
-                onBackClick = { /* Handle back */ }
+                onBackClick = { navController.popBackStack() }
             )
         },
         bottomBar = {

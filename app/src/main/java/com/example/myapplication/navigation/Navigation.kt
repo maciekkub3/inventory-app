@@ -18,9 +18,18 @@ import com.example.myapplication.ui.Screens.OwnerScreens.WarehousesScreen.Choose
 import com.example.myapplication.ui.Screens.OwnerScreens.WarehousesScreen.ChooseWarehouseScreen.ChooseWarehouseViewModel
 import com.example.myapplication.ui.Screens.OwnerScreens.WarehousesScreen.WarehouseViewScreen.WarehouseDetailsScreen
 import com.example.myapplication.ui.Screens.SignInScreen.LoginScreen
+import com.example.myapplication.ui.Screens.UserScreens.AddProductScreen.AddNewProductScreen
+import com.example.myapplication.ui.Screens.UserScreens.AddProductScreen.AddProductScreen
 import com.example.myapplication.ui.Screens.UserScreens.ChooseWarehousesUserScreen.ChooseWarehouseUserScreen
 import com.example.myapplication.ui.Screens.UserScreens.ChooseWarehousesUserScreen.ChooseWarehouseUserViewModel
+import com.example.myapplication.ui.Screens.UserScreens.History.HistoryScreen
+import com.example.myapplication.ui.Screens.UserScreens.Inventory.InventoryScreen
+import com.example.myapplication.ui.Screens.UserScreens.Inventory.ItemViewScreen
 import com.example.myapplication.ui.Screens.UserScreens.MainScreen.MainScreen
+import com.example.myapplication.ui.Screens.UserScreens.ReportsScreen.ReportsScreen
+import com.example.myapplication.ui.Screens.UserScreens.SettingsScreen.ChangePasswordScreen
+import com.example.myapplication.ui.Screens.UserScreens.SettingsScreen.EditProfileScreen
+import com.example.myapplication.ui.Screens.UserScreens.SettingsScreen.SettingsScreen
 import com.example.myapplication.ui.signin.SignInViewModel
 import com.example.myapplication.ui.signin.SignInViewModelEvent
 import kotlinx.coroutines.CoroutineScope
@@ -35,7 +44,7 @@ fun Navigation(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.OwnerMenu.route
+        startDestination = Screen.WarehouseMenu.route
     ) {
         composable(route = Screen.SignIn.route) {
             val viewModel = hiltViewModel<SignInViewModel>()
@@ -67,6 +76,37 @@ fun Navigation(
         composable(route = Screen.OwnerMenu.route) {
             OwnerMenuScreen(navController = navController)
         }
+
+        composable(route = Screen.Settings.route) {
+            SettingsScreen(navController = navController)
+        }
+        composable(route = Screen.EditProfile.route) {
+            EditProfileScreen(navController = navController)
+        }
+        composable(route = Screen.ChangePassword.route) {
+            ChangePasswordScreen(navController = navController)
+        }
+        composable(route = Screen.History.route) {
+            HistoryScreen(navController = navController)
+        }
+        composable(route = Screen.Inventory.route) {
+            InventoryScreen(navController = navController)
+        }
+        composable(route = Screen.AddProduct.route) {
+            AddProductScreen(navController = navController)
+        }
+        composable(route = Screen.Reports.route) {
+            ReportsScreen(navController = navController)
+        }
+        composable(route = Screen.AddNewProduct.route) {
+            AddNewProductScreen(navController = navController)
+        }
+        composable(route = Screen.ItemView.route) {
+            ItemViewScreen(navController = navController)
+        }
+
+
+
         composable(route = Screen.OwnerWarehouseMenu.route) {
             val chooseWarehouseViewModel: ChooseWarehouseViewModel = hiltViewModel()
             LaunchedEffect(chooseWarehouseViewModel.navigateToWarehouseDetails) {
@@ -121,7 +161,7 @@ fun Navigation(
         composable(route = "mainPage/{warehouseId}") { backStackEntry ->
             val warehouseId = backStackEntry.arguments?.getString("warehouseId")
             warehouseId?.let {
-                MainScreen()
+                MainScreen(navController = navController)
             }
         }
     }

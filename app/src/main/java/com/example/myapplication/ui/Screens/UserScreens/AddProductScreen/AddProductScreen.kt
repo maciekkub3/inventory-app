@@ -9,23 +9,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
 import com.example.myapplication.R
+import com.example.myapplication.navigation.Screen
 import com.example.myapplication.ui.common.AddProductBottomBar
 import com.example.myapplication.ui.common.AddProductLabel
 import com.example.myapplication.ui.common.BackTopAppBar
 import com.example.myapplication.ui.theme.DarkSlateGray
 
-@Preview
 @Composable
-fun ChangePasswordScreen(
+fun AddProductScreen(
+    navController: NavController,
 
-) {
+    ) {
     Scaffold(
         topBar = {
             BackTopAppBar(
                 title = "Add Product",
-                onBackClick = {}
+                onBackClick = {navController.popBackStack()}
             )
         },
         bottomBar = {
@@ -36,7 +37,7 @@ fun ChangePasswordScreen(
                 secondText = "Apply",
                 onFirstButtonClick = { /* Handle first button click */ },
                 onSecondButtonClick = { /* Handle second button click */ },
-                AddNewButtonClick = { /* Handle second button click */ }
+                AddNewButtonClick = { navController.navigate(Screen.AddNewProduct.route) }
             )
         }
     )
