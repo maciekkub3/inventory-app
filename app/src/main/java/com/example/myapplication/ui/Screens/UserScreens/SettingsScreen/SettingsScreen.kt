@@ -52,7 +52,6 @@ fun SettingsScreen(
                 SettingsButton(
                     "Change Password",
                     onClick = { navController.navigate(Screen.ChangePassword.route) })
-                SettingsButton("Language Selection", onClick = { /* Handle click */ })
             }
 
     }

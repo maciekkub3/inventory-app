@@ -11,6 +11,8 @@ data class UserViewScreenState(
     val address: String = "",
     val dateOfEmployment: String = "",
     val lastLogin: String = "",
-    val imageUri: Uri? = null
+    val imageUri: Uri? = null,
+    val originalImageUrl: String = ""
+
 
 )

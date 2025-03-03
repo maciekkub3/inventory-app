@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -17,7 +19,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -33,6 +34,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -44,9 +48,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.myapplication.R
+import com.example.myapplication.domain.model.Item
 import com.example.myapplication.navigation.Screen
+import com.example.myapplication.ui.common.ItemRow
 import com.example.myapplication.ui.common.bottomBorder
 import com.example.myapplication.ui.theme.CharcoalBlue
 import com.example.myapplication.ui.theme.DarkTealBlue
@@ -56,17 +63,36 @@ import com.example.myapplication.ui.theme.backgroundGradientBrush
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
+    warehouseId: String,
     navController: NavController,
+    viewModel: MainScreenViewModel = hiltViewModel()
+) {
 
-    ) {
+    LaunchedEffect(Unit) {
+        viewModel.refresh()
+    }
+
+    val percentage = viewModel.warehouseCapacityPercentage
+    val totalSize = viewModel.totalProductsSize
+    val warehouseSize = viewModel.warehouseSize
+    val lastFiveItems by viewModel.lastFiveItems
+    val userTypeState by viewModel.userType.collectAsState()
+
+
+
     Scaffold(
         topBar = {
             DashboardTopBar(
                 onSettingsClick = {
                     navController.navigate(Screen.Settings.route)
-                })
+                },
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
         },
-    ) { paddingValues ->
+        contentWindowInsets = WindowInsets(0.dp),
+        ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -85,14 +111,14 @@ fun MainScreen(
                     .fillMaxWidth()
                     .padding(horizontal = 30.dp)
             ) {
-                InfoCard(title = "Warehouse Capacity", percentage = 85)
-                ScanCard()
+                InfoCard(title = "Warehouse Capacity", percentage = percentage, warehouseSize = warehouseSize, totalSize = totalSize)
+                ScanCard(navController, onScanClick = {navController.navigate("qrScanner/$warehouseId")})
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
             // Add Product Button
-            AddProductButton(onButtonClick = { navController.navigate(Screen.AddProduct.route) })
+            AddProductButton(onButtonClick = { navController.navigate("AddProduct/$warehouseId") })
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -103,25 +129,32 @@ fun MainScreen(
                 GridButton(
                     "History",
                     painterResource(R.drawable.icons8_history),
-                    onButtonClick = { navController.navigate(Screen.History.route) })
+                    onButtonClick = { navController.navigate("${Screen.History.route}/$warehouseId") })
 
-                if (true) { //TODO if user is owner
+                if (userTypeState == Result.success("Admin")) { //TODO if user is admin
 
                     GridButton(
                         "Workers",
                         painterResource(R.drawable.icons8_users),
-                        onButtonClick = { }) //TODO
+                        onButtonClick = { navController.navigate("Workers/$warehouseId") }) //TODO
                 }
                 GridButton(
                     "Reports",
                     painterResource(R.drawable.icons8_file),
-                    onButtonClick = { navController.navigate(Screen.Reports.route) }) //TODO
+                    onButtonClick = { navController.navigate("${Screen.Reports.route}/$warehouseId") }) //TODO
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
             // Inventory Section
-            InventorySection(onButtonClick = { navController.navigate(Screen.Inventory.route) })
+            InventorySection(
+                onButtonClick = { navController.navigate("${Screen.Inventory.route}/$warehouseId")},
+                lastFiveItems = lastFiveItems,
+                onItemClick = {
+
+                    navController.navigate("${Screen.ItemView.route}/$it/$warehouseId")
+                }
+            )
 
         }
     }
@@ -130,17 +163,19 @@ fun MainScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardTopBar(
-    onSettingsClick: () -> Unit
+    onSettingsClick: () -> Unit,
+    onBackClick: () -> Unit
 ) {
     TopAppBar(
         modifier = Modifier.bottomBorder(
             strokeWidth = 1.dp, color = Color.Black
         ),
         title = {},
+
         navigationIcon = {
-            IconButton(onClick = { /* Handle menu */ }) {
+            IconButton(onClick = { onBackClick() }) {
                 Icon(
-                    Icons.Default.Menu,
+                    painter = painterResource(R.drawable.icons8_arrowback),
                     contentDescription = "Menu",
                     tint = Color.White,
                     modifier = Modifier.size(30.dp)
@@ -161,8 +196,9 @@ fun DashboardTopBar(
     )
 }
 
+
 @Composable
-fun InfoCard(title: String, percentage: Int) {
+fun InfoCard(title: String, percentage: Int, warehouseSize: Int, totalSize: Int) {
     Card(
         modifier = Modifier.size(150.dp),
         colors = CardDefaults.cardColors(containerColor = CharcoalBlue),
@@ -194,14 +230,28 @@ fun InfoCard(title: String, percentage: Int) {
                     textAlign = TextAlign.Center
                 )
                 Spacer(modifier = Modifier.height(10.dp))
-                CircularProgressIndicator(
-                    progress = percentage / 100f,
-                    color = Color.Cyan,
-                    modifier = Modifier.size(60.dp)
-                )
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.size(60.dp)  // Ensures the Box is the same size as the CircularProgressIndicator
+                ) {
+                    CircularProgressIndicator(
+                        progress = percentage / 100f,
+                        color = Color.Cyan,
+                        modifier = Modifier.size(60.dp)
+                    )
+
+                    // Add Text inside the CircularProgressIndicator
+                    Text(
+                        text = "$percentage%",
+                        color = if(percentage > 100) Color.Red else Color.White,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
                 Text(
-                    text = "$percentage%",
-                    color = Color.White,
+                    text = "$warehouseSize/$totalSize m3",
+                    textAlign = TextAlign.Center,
+                    color = if(percentage > 100) Color.Red else Color.White,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -213,9 +263,11 @@ fun InfoCard(title: String, percentage: Int) {
 }
 
 @Composable
-fun ScanCard() {
+fun ScanCard(navController: NavController, onScanClick: () -> Unit = {}) {
     Card(
-        modifier = Modifier.size(150.dp),
+        modifier = Modifier
+            .size(150.dp)
+            .clickable { onScanClick()},
         colors = CardDefaults.cardColors(containerColor = CharcoalBlue),
         shape = RoundedCornerShape(24.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
@@ -339,13 +391,21 @@ fun UseButtons() {
 
 
 @Composable
-fun InventorySection(onButtonClick: () -> Unit) {
+fun InventorySection(
+    onButtonClick: () -> Unit,
+    lastFiveItems: List<Item>,
+    onItemClick: (String) -> Unit
+
+
+) {
     Card(
         colors = CardDefaults.cardColors(containerColor = Color(0xFF374251)),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         modifier = Modifier
             .padding(horizontal = 16.dp)
+            .padding(bottom = 16.dp)
+
     ) {
         Column(
             modifier = Modifier
@@ -401,7 +461,7 @@ fun InventorySection(onButtonClick: () -> Unit) {
             ) {
                 Column() {
                     Text(
-                        text = "Recently Added",
+                        text = "Recent items",
                         color = Color.White,
                         fontSize = 18.sp,
                         modifier = Modifier.padding(top = 8.dp, start = 8.dp, bottom = 4.dp)
@@ -419,7 +479,10 @@ fun InventorySection(onButtonClick: () -> Unit) {
                             text = "Quantity",
                             color = Color.Gray,
                             fontSize = 13.sp,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .weight(1f)
 
                         )
                         Text(
@@ -427,13 +490,21 @@ fun InventorySection(onButtonClick: () -> Unit) {
                             color = Color.Gray,
                             fontSize = 13.sp,
                             fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .weight(1f)
+                                .offset(x = (10).dp)
+
 
                             )
                         Text(
-                            text = "Last Restock",
+                            text = "Last Update",
                             color = Color.Gray,
                             fontSize = 13.sp,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .weight(1f)
 
                         )
 
@@ -445,46 +516,37 @@ fun InventorySection(onButtonClick: () -> Unit) {
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
+                            .fillMaxHeight()
                             .padding(horizontal = 12.dp)
+
+
+
                     ) {
-
-                        data class InventoryItem(
-                            val quantity: String,
-                            val item: String,
-                            val lastRestock: String,
-                            val imageResId: Int,
-                            val price: String
-                        )
-
-
-                        val items = listOf(
-                            InventoryItem("85", "Coca Cola", "55pcs", R.drawable.colka, "22"),
-                            InventoryItem("85", "drill", "55pcs", R.drawable.drill, "42"),
-                            InventoryItem("85", "Black label", "55pcs", R.drawable.label, "100"),
-                            InventoryItem("85", "Plank", "55pcs", R.drawable.plank, "10"),
-                            InventoryItem("85", "Airpods Pro", "55pcs", R.drawable.airpods, "200"),
-                        )
-
-                        items.forEach { item ->
-                            InventoryItemRow(
-                                item.quantity,
-                                item.item,
-                                item.lastRestock,
-                                item.imageResId,
-                                item.price
+                        lastFiveItems.forEach { item ->
+                            ItemRow(
+                                id = item.id,
+                                quantity = item.quantity.toString(),
+                                item = item.name,
+                                lastRestock = item.lastRestock.toString(),
+                                imageUrl = item.imageUrl,
+                                price = item.price.toString(),
+                                onItemClick = onItemClick
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                         }
                     }
+
+
+
+
+
                 }
-
-
             }
-
-
         }
     }
 }
+
+
 
 
 @Composable

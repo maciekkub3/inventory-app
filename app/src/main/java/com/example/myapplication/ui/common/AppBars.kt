@@ -114,6 +114,8 @@ fun BackTopAppBar(onBackClick: () -> Unit, title: String) {
 }
 
 
+
+
 @Composable
 fun BottomBarWithTextAndButton(
     text: String,
@@ -160,11 +162,12 @@ fun BottomBarWithText(
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
+        horizontalArrangement = Arrangement.Center,
         modifier = Modifier
             .fillMaxWidth()
             .background(CharcoalBlue) // Background color for the bottom bar
             .padding(horizontal = 8.dp)
+            .height(60.dp)
 
     ) {
 
@@ -172,7 +175,8 @@ fun BottomBarWithText(
             text = text,
             color = Color.White,
             fontSize = 16.sp,
-            modifier = Modifier
+            modifier = Modifier,
+            textAlign = TextAlign.Center
         )
 
 
@@ -405,6 +409,7 @@ fun AddProductBottomBar(
     secondColor: Color = Color.Green ,
     firstText: String = "CANCEL",
     secondText: String = "APPLY",
+    productTypeCount: Int = 0,
     onFirstButtonClick: () -> Unit,
     onSecondButtonClick: () -> Unit,
     AddNewButtonClick: () -> Unit
@@ -440,7 +445,7 @@ fun AddProductBottomBar(
                     ) {
 
                         Text(
-                            text = "Total product Types: 10",
+                            text = "Total product types: $productTypeCount",
                             fontSize = 14.sp,
                             color = Color.White,
                             fontWeight = FontWeight.Bold,

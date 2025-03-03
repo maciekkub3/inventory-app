@@ -36,7 +36,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.myapplication.R
 import com.example.myapplication.ui.common.BackTopAppBar
-import com.example.myapplication.ui.common.InformationTextField
+import com.example.myapplication.ui.common.ChangableInformationTextField
 import com.example.myapplication.ui.common.TwoButtonsBottomBar
 import com.example.myapplication.ui.signin.AddUserViewModel
 import com.example.myapplication.ui.theme.Dark
@@ -122,31 +122,41 @@ fun AddUserScreen(
                     modifier = Modifier
                         .padding(7.dp)
                 ) {
-                    InformationTextField(
+                    ChangableInformationTextField(
                         dataType = "Name",
                         userInput = state.name,
-                        onValueChange = { viewModel.updateName(it) }
+                        onValueChange = { viewModel.updateName(it) },
+                        isNumeric = false
                     )
 
-                    InformationTextField(
+                    ChangableInformationTextField(
                         dataType = "Email",
                         userInput = state.email,
-                        onValueChange = { viewModel.updateUserEmail(it) }
+                        onValueChange = { viewModel.updateUserEmail(it) },
+                        isNumeric = false
+
                     )
-                    InformationTextField(
+                    ChangableInformationTextField(
                         dataType = "Password",
                         userInput = state.password,
-                        onValueChange = { viewModel.updatePassword(it) }
+                        onValueChange = { viewModel.updatePassword(it) },
+                        isNumeric = false
+
                     )
-                    InformationTextField(
+                    ChangableInformationTextField(
                         dataType = "Phone Number",
                         userInput = state.phoneNumber,
-                        onValueChange = { viewModel.updatePhoneNumber(it) }
+                        onValueChange = { viewModel.updatePhoneNumber(it) },
+                        isNumeric = true
+
+
                     )
-                    InformationTextField(
+                    ChangableInformationTextField(
                         dataType = "Address",
                         userInput = state.Adress,
-                        onValueChange = { viewModel.updateAdress(it) }
+                        onValueChange = { viewModel.updateAdress(it) },
+                        isNumeric = false
+
                     )
                     Row(
                         modifier = Modifier

@@ -1,5 +1,8 @@
 package com.example.myapplication.navigation
 
+import QRScannerScreen
+import ScannedProductScreen
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -30,6 +33,9 @@ import com.example.myapplication.ui.Screens.UserScreens.ReportsScreen.ReportsScr
 import com.example.myapplication.ui.Screens.UserScreens.SettingsScreen.ChangePasswordScreen
 import com.example.myapplication.ui.Screens.UserScreens.SettingsScreen.EditProfileScreen
 import com.example.myapplication.ui.Screens.UserScreens.SettingsScreen.SettingsScreen
+import com.example.myapplication.ui.Screens.UserScreens.WorkersScreen.WorkersScreen
+import com.example.myapplication.ui.Screens.UserScreens.WorkersScreen.WorkersScreenViewModel
+import com.example.myapplication.ui.Screens.UserScreens.WorkersScreen.WorkersViewScreen
 import com.example.myapplication.ui.signin.SignInViewModel
 import com.example.myapplication.ui.signin.SignInViewModelEvent
 import kotlinx.coroutines.CoroutineScope
@@ -44,7 +50,7 @@ fun Navigation(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.WarehouseMenu.route
+        startDestination = Screen.SignIn.route
     ) {
         composable(route = Screen.SignIn.route) {
             val viewModel = hiltViewModel<SignInViewModel>()
@@ -86,24 +92,24 @@ fun Navigation(
         composable(route = Screen.ChangePassword.route) {
             ChangePasswordScreen(navController = navController)
         }
-        composable(route = Screen.History.route) {
-            HistoryScreen(navController = navController)
+        /*composable(route = Screen.QRScan.route) {
+            QRCodeScannerScreen(navController = navController)
         }
-        composable(route = Screen.Inventory.route) {
-            InventoryScreen(navController = navController)
+        composable(route = "${Screen.ScannedProducts.route}/{scannedData}") { backStackEntry ->
+            val scannedData = backStackEntry.arguments?.getString("scannedData") ?: ""
+            ReviewScreen(navController, scannedData)
         }
-        composable(route = Screen.AddProduct.route) {
-            AddProductScreen(navController = navController)
+*/
+
+        composable(route = "${Screen.Reports.route}/{warehouseId}") { backStackEntry ->
+            val warehouseId = backStackEntry.arguments?.getString("warehouseId")
+            warehouseId?.let {id ->
+                ReportsScreen(navController = navController, context = navController.context, warehouseId = id)
+            }
         }
-        composable(route = Screen.Reports.route) {
-            ReportsScreen(navController = navController)
-        }
-        composable(route = Screen.AddNewProduct.route) {
-            AddNewProductScreen(navController = navController)
-        }
-        composable(route = Screen.ItemView.route) {
-            ItemViewScreen(navController = navController)
-        }
+
+
+
 
 
 
@@ -144,8 +150,8 @@ fun Navigation(
 
 
         composable(route = "userView/{userId}") { backStackEntry ->
-            val warehouseId = backStackEntry.arguments?.getString("userId")
-            warehouseId?.let {
+            val userId = backStackEntry.arguments?.getString("userId")
+            userId?.let {
                 UserDetailScreen(userId = it, navController = navController)
             }
         }
@@ -161,13 +167,91 @@ fun Navigation(
         composable(route = "mainPage/{warehouseId}") { backStackEntry ->
             val warehouseId = backStackEntry.arguments?.getString("warehouseId")
             warehouseId?.let {
-                MainScreen(navController = navController)
+                MainScreen(warehouseId = it, navController = navController)
+            }
+        }
+
+        composable(route = "AddProduct/{warehouseId}") { backStackEntry ->
+            val warehouseId = backStackEntry.arguments?.getString("warehouseId")
+            warehouseId?.let { id ->
+                AddProductScreen(navController = navController, warehouseId = id)
+            }
+        }
+        composable(route = "AddNewProduct/{warehouseId}") { backStackEntry ->
+            val warehouseId = backStackEntry.arguments?.getString("warehouseId")
+            warehouseId?.let { id ->
+                AddNewProductScreen(navController = navController, warehouseId = id)
+            }
+        }
+
+        composable(route = "Workers/{warehouseId}") { backStackEntry ->
+            val warehouseId = backStackEntry.arguments?.getString("warehouseId")
+            warehouseId?.let { id ->
+                WorkersScreen(navController = navController, warehouseId = id)
+            }
+            val workersScreenViewModel: WorkersScreenViewModel = hiltViewModel()
+            LaunchedEffect(workersScreenViewModel.navigateToUserDetails) {
+                workersScreenViewModel.navigateToUserDetails.collect { userId ->
+                    navController.navigate("workerView/$userId")
+                }
+            }
+        }
+        composable(route = "workerView/{userId}") { backStackEntry ->
+            val userId = backStackEntry.arguments?.getString("userId")
+            userId?.let {
+                WorkersViewScreen(userId = it, navController = navController)
+            }
+        }
+
+        composable(route = "qrScanner/{warehouseId}") { backStackEntry ->
+            val warehouseId = backStackEntry.arguments?.getString("warehouseId")
+            warehouseId?.let { id ->
+                QRScannerScreen(
+                    onQrCodeScanned = { scannedValue ->
+                        navController.navigate("scannedProduct/$warehouseId/$scannedValue")
+                        Log.d("QRScanner", "Scanned: $scannedValue")
+                    },
+                    onBack = { navController.popBackStack() },
+                    warehouseId = id
+                )
+            }
+        }
+
+        composable("scannedProduct/{warehouseId}/{scannedValue}") { backStackEntry ->
+            val warehouseId = backStackEntry.arguments?.getString("warehouseId") ?: ""
+            val scannedValue = backStackEntry.arguments?.getString("scannedValue") ?: ""
+
+            ScannedProductScreen(
+                warehouseId = warehouseId,
+                scannedValue = scannedValue,
+                onBack = { navController.popBackStack() },
+                navController = navController
+            )
+        }
+
+        composable(route = "${Screen.Inventory.route}/{warehouseId}") { backStackEntry ->
+            val warehouseId = backStackEntry.arguments?.getString("warehouseId")
+            warehouseId?.let { id ->
+                InventoryScreen(navController = navController, warehouseId = id)
+            }
+        }
+
+        composable(route = "${Screen.History.route}/{warehouseId}") { backStackEntry ->
+            val warehouseId = backStackEntry.arguments?.getString("warehouseId")
+            warehouseId?.let { id ->
+                HistoryScreen(navController = navController, warehouseId = id)
+            }
+        }
+
+
+        composable(route = "${Screen.ItemView.route}/{itemId}/{warehouseId}") { backStackEntry ->
+            val warehouseId = backStackEntry.arguments?.getString("warehouseId")
+            val itemId = backStackEntry.arguments?.getString("itemId")
+            itemId?.let { id ->
+                warehouseId?.let { warehouse ->
+                    ItemViewScreen(navController = navController, itemId = id, warehouseId = warehouse)
+                }
             }
         }
     }
-
-
-
-
-
 }

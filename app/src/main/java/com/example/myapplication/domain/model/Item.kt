@@ -1,15 +1,16 @@
 package com.example.myapplication.domain.model
 
-import androidx.annotation.DrawableRes
+import com.google.firebase.firestore.PropertyName
+
 
 data class Item(
-    val id: String,
-    val warehouseId: String,
-    val description: String,
-    @DrawableRes val image_id: Int,
-    val last_restock_value: Int,
-    val name: String,
-    val price: Int,
-    val quantity: Int
+    @PropertyName("name") val name: String = "",
+    @PropertyName("description") val description: String = "",
+    @PropertyName("price") val price: Int = 0,
+    @PropertyName("quantity") val quantity: Int = 0,
+    @PropertyName("imageUrl") val imageUrl: String = "",
+    @PropertyName("lastRestock") val lastRestock: Int = 0,
+    @PropertyName("id") val id: String = "",
+    @PropertyName("size") val size: Double = 0.0,
+    @PropertyName ("adjustedQuantity") val adjustedQuantity: Int = 0
 )
-

@@ -46,7 +46,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.myapplication.ui.common.BackTopAppBar
-import com.example.myapplication.ui.common.InformationTextField
+import com.example.myapplication.ui.common.ChangableInformationTextField
 import com.example.myapplication.ui.common.TwoButtonsBottomBar
 import com.example.myapplication.ui.theme.Dark
 import com.example.myapplication.ui.theme.DarkGrayish
@@ -105,15 +105,19 @@ fun AddWarehouseScreen(
                         .padding(7.dp)
                 ) {
                     // Input fields for warehouse name and space
-                    InformationTextField(
+                    ChangableInformationTextField(
                         dataType = "Name",
                         userInput = state.name,
-                        onValueChange = { viewModel.updateWarehouseName(it) }
+                        onValueChange = { viewModel.updateWarehouseName(it) },
+                        isNumeric = false
+
                     )
-                    InformationTextField(
-                        dataType = "Space",
+                    ChangableInformationTextField(
+                        dataType = "Space(m3)",
                         userInput = state.space,
-                        onValueChange = { viewModel.updateWarehouseSpace(it) }
+                        onValueChange = { viewModel.updateWarehouseSpace(it) },
+                        isNumeric = true
+
                     )
 
                     Spacer(modifier = Modifier.height(8.dp))

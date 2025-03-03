@@ -13,6 +13,7 @@ import com.example.myapplication.data.firebase.FirebaseAuthClient
 import com.example.myapplication.domain.model.User
 import com.example.myapplication.navigation.Screen
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -61,7 +62,9 @@ class UserDetailViewModel @Inject constructor(
                         email = user.email,
                         phoneNumber = user.phoneNumber,
                         address = user.address,
-                        imageUri = user.imageUrl.let { Uri.parse(it) } // Convert String to Uri
+                        imageUri = user.imageUrl.let { Uri.parse(it) },
+                        originalImageUrl = user.imageUrl // To detect changes
+
 
                     )
                 }
@@ -71,30 +74,48 @@ class UserDetailViewModel @Inject constructor(
         }
     }
 
+    suspend fun uploadImageToFirebase(imageUri: Uri): String {
+        val storageReference = FirebaseStorage.getInstance().reference
+        val fileName = "users/${System.currentTimeMillis()}.jpg"
+        val uploadTask = storageReference.child(fileName).putFile(imageUri).await()
+        return uploadTask.storage.downloadUrl.await().toString()
+    }
+
     fun saveUserDetails(userId: String, onSuccess: () -> Unit, onError: (Exception) -> Unit) {
         val currentState = _state.value
 
-        // Create a User object with updated details (excluding 'id')
-        val updatedUser = currentState.imageUri?.toString()?.let {
-            User(
-                id = userId, // Use this only as the document ID, not as a field
-                name = currentState.name,
-                role = currentState.role,
-                email = currentState.email,
-                phoneNumber = currentState.phoneNumber,
-                address = currentState.address,
-                imageUrl = it
-            )
-        }
+        // Check if the image URI is not the same as the one stored in Firestore
+        viewModelScope.launch {
+            try {
+                val imageUrl = if (currentState.imageUri?.toString() != currentState.originalImageUrl) {
+                    // Upload the new image to Firebase Storage if it has been changed
+                    uploadImageToFirebase(currentState.imageUri!!)
+                } else {
+                    // Use the existing image URL if it hasn't changed
+                    currentState.originalImageUrl
+                }
 
-        // Save the updated user to Firestore
-        if (updatedUser != null) {
-            firebaseAuthRepository.updateUser(
-                userId = userId, // Use 'userId' as the document ID
-                updatedUser = updatedUser,
-                onSuccess = { onSuccess() },
-                onError = { exception -> onError(exception) }
-            )
+                // Create a User object with updated details
+                val updatedUser = User(
+                    id = userId, // Use this only as the document ID, not as a field
+                    name = currentState.name,
+                    role = currentState.role,
+                    email = currentState.email,
+                    phoneNumber = currentState.phoneNumber,
+                    address = currentState.address,
+                    imageUrl = imageUrl // Updated or existing image URL
+                )
+
+                // Save the updated user to Firestore
+                firebaseAuthRepository.updateUser(
+                    userId = userId, // Use 'userId' as the document ID
+                    updatedUser = updatedUser,
+                    onSuccess = { onSuccess() },
+                    onError = { exception -> onError(exception) }
+                )
+            } catch (exception: Exception) {
+                onError(exception)
+            }
         }
     }
 

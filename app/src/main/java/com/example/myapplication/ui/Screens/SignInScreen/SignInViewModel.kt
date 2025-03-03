@@ -100,6 +100,7 @@ class SignInViewModel @Inject constructor(
                                         userType = userType
                                     )
                                 }
+
                                 handleOnUserSignedIn(userType)
                             } else {
                                 // Handle error
@@ -116,6 +117,7 @@ class SignInViewModel @Inject constructor(
         }
     }
 
+
     private fun handleOnUserSignedIn(userType: String?) {
         //navigate here with proper userType
         if(userType == "Owner") {
@@ -124,6 +126,8 @@ class SignInViewModel @Inject constructor(
             eventChannel.trySend(SignInViewModelEvent.SignInAsWorkerSuccessful)
         }
     }
+
+
 }
 
 

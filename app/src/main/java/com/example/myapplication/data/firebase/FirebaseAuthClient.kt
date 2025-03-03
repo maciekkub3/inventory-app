@@ -3,6 +3,7 @@ package com.example.myapplication.data.firebase
 import com.example.myapplication.domain.model.User
 import com.example.myapplication.domain.model.Warehouse
 import com.google.firebase.auth.AuthResult
+import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
@@ -25,6 +26,20 @@ class FirebaseAuthClient @Inject constructor(){
         MutableSharedFlow(extraBufferCapacity = 1)
     val event: SharedFlow<AuthEvent> = _event
 
+
+    fun getUserType(userId: String): Flow<Result<String>> = flow {
+        try {
+            val document = FirebaseFirestore.getInstance()
+                .collection("users")
+                .document(userId)
+                .get()
+                .await()
+            val userType = document.getString("role") ?: "unknown"
+            emit(Result.success(userType))
+        } catch (e: Exception) {
+            emit(Result.failure(e))
+        }
+    }
 
 
 
@@ -66,23 +81,41 @@ class FirebaseAuthClient @Inject constructor(){
         return FirebaseAuth.getInstance().currentUser?.uid
     }
 
-    fun getUserType(userId: String): Flow<Result<String>> = flow {
-        try {
-            val document = FirebaseFirestore.getInstance()
-                .collection("users")
-                .document(userId)
-                .get()
-                .await()
-            val userType = document.getString("role") ?: "unknown"
-            emit(Result.success(userType))
-        } catch (e: Exception) {
-            emit(Result.failure(e))
-        }
-    }
+
 
     fun getCurrentUser(): FirebaseUser? {
         return FirebaseAuth.getInstance().currentUser
     }
+
+
+    fun reauthenticateUser(email: String, password: String, callback: (Result<Unit>) -> Unit) {
+        val user = FirebaseAuth.getInstance().currentUser
+        val credential = EmailAuthProvider.getCredential(email, password)
+
+        user?.reauthenticate(credential)
+            ?.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    callback(Result.success(Unit))
+                } else {
+                    callback(Result.failure(task.exception ?: Exception("Reauthentication failed")))
+                }
+            }
+    }
+
+
+    fun updateUserPassword(newPassword: String, callback: (Result<Unit>) -> Unit) {
+        val user = FirebaseAuth.getInstance().currentUser
+
+        user?.updatePassword(newPassword)
+            ?.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    callback(Result.success(Unit))
+                } else {
+                    callback(Result.failure(task.exception ?: Exception("Password update failed")))
+                }
+            }
+    }
+
 
 
 

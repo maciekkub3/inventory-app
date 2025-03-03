@@ -2,28 +2,32 @@
 
 package com.example.myapplication.ui.Screens.UserScreens.SettingsScreen
 
-import androidx.compose.foundation.Image
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.myapplication.R
+import coil.compose.AsyncImage
 import com.example.myapplication.ui.common.BackTopAppBar
-import com.example.myapplication.ui.common.InformationLabel
+import com.example.myapplication.ui.common.ChangableInformationTextField
 import com.example.myapplication.ui.common.TwoButtonsBottomBar
 import com.example.myapplication.ui.theme.DarkGrayish
 import com.example.myapplication.ui.theme.DarkSlateGray
@@ -31,7 +35,12 @@ import com.example.myapplication.ui.theme.DarkSlateGray
 @Composable
 fun EditProfileScreen(
     navController: NavController,
+    viewModel: EditProfileScreenViewModel = hiltViewModel()
 ) {
+
+    val state = viewModel.state.collectAsState().value
+    val userId = viewModel.userId
+
     Scaffold(
         topBar = {
             BackTopAppBar(
@@ -45,8 +54,21 @@ fun EditProfileScreen(
                 secondColor = Color.Green,
                 firstText = "Cancel",
                 secondText = "Apply",
-                onFirstButtonClick = { /* Handle first button click */ },
-                onSecondButtonClick = { /* Handle second button click */ }
+                onFirstButtonClick = { navController.popBackStack() },
+                onSecondButtonClick = {
+                    viewModel.saveUserDetails(
+                        userId!!,
+                        onSuccess = {
+                            navController.navigateUp() // Navigate back on success
+                        },
+                        onError = { exception ->
+                            // Show error message to the user
+                            Log.e(
+                                "UserDetailScreen",
+                                "Error saving user details: ${exception.message}"
+                            )
+                        })
+                }
             )
         }
     )
@@ -59,13 +81,27 @@ fun EditProfileScreen(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.person),
-                contentDescription = "Profile Image",
-                Modifier
-                    .size(300.dp)
+
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .size(200.dp)
                     .clip(CircleShape)
-            )
+            ) {
+
+                AsyncImage(
+                    model = state.imageUrl,
+                    contentDescription = "User Profile Image",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(CircleShape)
+                )
+
+            }
+
+            Spacer(modifier = Modifier.height(30.dp))
+
             Box(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
@@ -79,29 +115,33 @@ fun EditProfileScreen(
                         .padding(7.dp)
                 ) {
 
-                    InformationLabel(
-                        dataType = "name",
-                        dataValue = "Jan Kowalski",
+                    ChangableInformationTextField(
+                        dataType = "Name",
+                        userInput = state.name,
+                        onValueChange = { newName -> viewModel.updateUserName(newName) },
+                        isNumeric = false
+
+
+                    )
+                    ChangableInformationTextField(
+                        dataType = "Phone Number",
+                        userInput = state.phoneNumber,
+                        onValueChange = { newPhoneNumber ->
+                            viewModel.updateUserPhoneNumber(
+                                newPhoneNumber
+                            )
+                        },
+                        isNumeric = true
+
+                    )
+                    ChangableInformationTextField(
+                        dataType = "Adress",
+                        userInput = state.address,
+                        onValueChange = { newAddress -> viewModel.updateUserAddress(newAddress) },
+                        isNumeric = false
+
                     )
 
-
-                    InformationLabel(
-                        dataType = "Email",
-                        dataValue = "maciek.k2001@gmail.com",
-
-                        )
-
-                    InformationLabel(
-                        dataType = "Phone Number",
-                        dataValue = "+48 692 994 231",
-
-                        )
-
-                    InformationLabel(
-                        dataType = "Adress",
-                        dataValue = "Swarożyca 15a/6",
-
-                        )
                 }
 
             }

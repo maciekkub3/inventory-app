@@ -99,4 +99,16 @@ dependencies {
 
     implementation(libs.coil.compose)
 
+    implementation(libs.itext7.core)
+
+
+    implementation(libs.barcode.scanning)
+    implementation(libs.androidx.camera.core.v141)
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.lifecycle.v141)
+    implementation(libs.androidx.camera.view.v141)
+    implementation(libs.guava)
+
+
+
 }

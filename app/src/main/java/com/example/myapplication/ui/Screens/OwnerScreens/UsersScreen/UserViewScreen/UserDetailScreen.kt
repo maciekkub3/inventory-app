@@ -4,7 +4,6 @@ import android.net.Uri
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -29,14 +28,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.example.myapplication.R
+import com.example.myapplication.navigation.Screen
 import com.example.myapplication.ui.common.BackTopAppBar
-import com.example.myapplication.ui.common.InformationTextField
+import com.example.myapplication.ui.common.ChangableInformationTextField
 import com.example.myapplication.ui.common.TwoButtonsBottomBar
 import com.example.myapplication.ui.theme.Dark
 import com.example.myapplication.ui.theme.DarkGrayish
@@ -48,11 +46,7 @@ fun UserDetailScreen(
     userId: String?,
     viewModel: UserDetailViewModel = hiltViewModel() // Get ViewModel via Hilt
 ) {
-/*    LaunchedEffect(userId) {
-        userId?.let {
-            viewModel.fetchUserDetails(it) // Fetch user details from Firebase
-        }
-    }*/
+
 
     val state = viewModel.state.collectAsState().value
 
@@ -79,7 +73,11 @@ fun UserDetailScreen(
                     viewModel.saveUserDetails(
                         userId = userId ?: "",
                         onSuccess = {
-                            navController.navigateUp() // Navigate back on success
+                            navController.navigate(Screen.OwnerUsersView.route) {
+                                // Optionally, pop the back stack so that users can't go back to the "Add Warehouse" screen
+                                popUpTo(route = "userView/{userId}") { inclusive = true }
+                                popUpTo(Screen.OwnerUsersView.route) { inclusive = true }
+                            }
                         },
                         onError = { exception ->
                             // Show error message to the user
@@ -107,22 +105,14 @@ fun UserDetailScreen(
                     .background(Dark)
                     .clickable { launcher.launch("image/*") } // Optional: Allow changing the profile image
             ) {
-                if (state.imageUri != null) {
-                    AsyncImage(
-                        model = state.imageUri,
-                        contentDescription = "User Profile Image",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clip(CircleShape)
-                    )
-                } else {
-                    Image(
-                        painter = painterResource(id = R.drawable.camera),
-                        contentDescription = "Default Profile Image",
-                        modifier = Modifier.size(150.dp)
-                    )
-                }
+                AsyncImage(
+                    model = state.imageUri,
+                    contentDescription = "User Profile Image",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(CircleShape)
+                )
             }
 
             Spacer(modifier = Modifier.height(30.dp))
@@ -137,26 +127,34 @@ fun UserDetailScreen(
                 Column(
                     modifier = Modifier.padding(7.dp)
                 ) {
-                    InformationTextField(
+                    ChangableInformationTextField(
                         dataType = "Name",
                         userInput = state.name,
-                        onValueChange = { newName -> viewModel.updateUserName(newName) }
+                        onValueChange = { newName -> viewModel.updateUserName(newName) },
+                        isNumeric = false
+
                     )
-                    InformationTextField(
+                    ChangableInformationTextField(
                         dataType = "Email",
                         userInput = state.email,
-                        onValueChange = { newEmail -> viewModel.updateUserEmail(newEmail) }
+                        onValueChange = { newEmail -> viewModel.updateUserEmail(newEmail) },
+                        isNumeric = false
+
                     )
 
-                    InformationTextField(
+                    ChangableInformationTextField(
                         dataType = "Phone Number",
                         userInput = state.phoneNumber,
-                        onValueChange = { newPhone -> viewModel.updateUserPhoneNumber(newPhone) }
+                        onValueChange = { newPhone -> viewModel.updateUserPhoneNumber(newPhone) },
+                        isNumeric = true
+
                     )
-                    InformationTextField(
+                    ChangableInformationTextField(
                         dataType = "Address",
                         userInput = state.address,
-                        onValueChange = { newAddress -> viewModel.updateUserAddress(newAddress) }
+                        onValueChange = { newAddress -> viewModel.updateUserAddress(newAddress) },
+                        isNumeric = false
+
                     )
 
                     Row(
