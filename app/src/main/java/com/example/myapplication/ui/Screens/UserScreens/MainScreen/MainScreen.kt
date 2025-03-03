@@ -131,17 +131,17 @@ fun MainScreen(
                     painterResource(R.drawable.icons8_history),
                     onButtonClick = { navController.navigate("${Screen.History.route}/$warehouseId") })
 
-                if (userTypeState == Result.success("Admin")) { //TODO if user is admin
+                if (userTypeState == Result.success("Admin")) {
 
                     GridButton(
                         "Workers",
                         painterResource(R.drawable.icons8_users),
-                        onButtonClick = { navController.navigate("Workers/$warehouseId") }) //TODO
+                        onButtonClick = { navController.navigate("Workers/$warehouseId") })
                 }
                 GridButton(
                     "Reports",
                     painterResource(R.drawable.icons8_file),
-                    onButtonClick = { navController.navigate("${Screen.Reports.route}/$warehouseId") }) //TODO
+                    onButtonClick = { navController.navigate("${Screen.Reports.route}/$warehouseId") })
             }
 
             Spacer(modifier = Modifier.height(16.dp))
