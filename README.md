@@ -1,6 +1,6 @@
 📦 Inventory Management App  
 This is a mobile application for managing warehouse inventory, developed as part of my engineering thesis.  
-It was my first Android project, so the code may be a bit messy in places — but it represents a full working  
+It was my first Android project, so the code is messy in places — but it represents a full working  
 solution that I’m proud to have built from scratch while learning Android development.
 
 📱 About the App  
